@@ -16,7 +16,12 @@ const Page = ({ children }: Props): JSX.Element => {
   return (
     <Layout className="layout">
       <Navbar />
-      <Content style={{ padding: '0 50px', background: colorBgContainer }}>
+      <Content
+        style={{
+          padding: '6rem 6rem',
+          background: colorBgContainer,
+        }}
+      >
         {children}
       </Content>
       <Footer
