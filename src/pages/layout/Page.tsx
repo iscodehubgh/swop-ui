@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { Layout, theme } from 'antd';
 import Navbar from '../../components/Header/Navbar';
 
 const { Footer, Content } = Layout;
@@ -16,11 +16,18 @@ const Page = ({ children }: Props): JSX.Element => {
   return (
     <Layout className="layout">
       <Navbar />
-      <Content style={{ padding: '0 50px' }}>
+      <Content style={{ padding: '0 50px', background: colorBgContainer }}>
         {children}
       </Content>
-      <Footer style={{ textAlign: 'center', position: 'fixed', bottom: '0', width: '100%' }}>
-        XChange ©2023 Created by XChange AB
+      <Footer
+        style={{
+          textAlign: 'center',
+          position: 'sticky',
+          bottom: '0',
+          width: '100%',
+        }}
+      >
+        SWOP ©2023 Created by CodeHub.IS
       </Footer>
     </Layout>
   );
