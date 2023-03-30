@@ -1,6 +1,6 @@
 import React from 'react';
-import Page from '../layout/Page';
-import Articles from '../../features/articles/Articles';
+import Page from '../components/layout/Page';
+import Articles from '../features/articles/Articles';
 
 const Home: React.FC = () => {
   return (
