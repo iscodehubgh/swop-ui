@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, Dropdown, Layout, Space } from 'antd';
 import { DownOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import './Navbar.less';
-import { useAppDispatch } from '../../app/hooks';
-import { showLoginModal } from '../../features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { authLoginStatus, showLoginModal } from '../../features/auth/authSlice';
 import LoginModal from '../../features/auth/login/Login';
 import RegisterModal from '../../features/auth/register/Register';
 
@@ -11,6 +11,14 @@ const { Header } = Layout;
 
 const Navbar = (): JSX.Element => {
   const dispatch = useAppDispatch();
+  const status = useAppSelector(authLoginStatus);
+
+  const [isLogged, setIsLogged] = useState<boolean>(false);
+
+  useEffect(() => {
+    const authToken = localStorage.getItem("authToken");
+    setIsLogged(!!authToken);
+  }, [status]);
 
   return (
     <Header
@@ -20,7 +28,7 @@ const Navbar = (): JSX.Element => {
       <div className="x-navbar-content">
         <div />
         <div className="x-menu">
-          {true && (
+          {isLogged && (
             <div>
               <Avatar
                 style={{
@@ -64,7 +72,7 @@ const Navbar = (): JSX.Element => {
               </Dropdown>
             </div>
           )}
-          {false && (
+          {!isLogged && (
             <span
               className="x-login"
               onClick={() => dispatch(showLoginModal(true))}

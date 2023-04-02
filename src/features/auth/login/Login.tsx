@@ -47,11 +47,12 @@ const LoginModal = () => {
           <Form
             name="x-login"
             layout="vertical"
-            onFinish={(data: Credentials) =>
+            onFinish={(data: Credentials) => {
               dispatch(
                 authLogin({ username: data.username, password: data.password })
-              )
-            }
+              );
+              dispatch(showLoginModal(false));
+            }}
           >
             <Form.Item
               label="Username"

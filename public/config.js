@@ -3,9 +3,9 @@
  *
  */
 
-window.REACT_APP_BACKEND_PROTOCOL = 'http';
+window.REACT_APP_BACKEND_PROTOCOL = 'https';
 window.REACT_APP_BACKEND_DOMAIN = 'localhost';
-window.REACT_APP_BACKEND_PORT = '5286';
+window.REACT_APP_BACKEND_PORT = '7286';
 window.REACT_APP_FRONTEND_PROTOCOL = 'http';
 window.REACT_APP_FRONTEND_DOMAIN = 'localhost';
 window.REACT_APP_FRONTEND_PORT = '3000';

@@ -50,6 +50,9 @@ export const authLogin = createAsyncThunk(
   'auth/login',
   async (body: Credentials) => {
     const response = await login(body.username, body.password);
+    console.log("response", response);
+    const { token } = response;
+    localStorage.setItem("authToken", token);
     return response;
   }
 );
@@ -82,7 +85,7 @@ export const authSlice = createSlice({
       })
       .addCase(authLogin.fulfilled, (state, action) => {
         state.login.status = 'idle';
-        state.login.value = action.payload;
+        // state.login.value = action.payload;
       })
       .addCase(authLogin.rejected, (state) => {
         state.login.status = 'failed';
