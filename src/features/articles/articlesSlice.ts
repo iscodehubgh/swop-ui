@@ -72,5 +72,7 @@ export const authSlice = createSlice({
 
 
 export const articlesFetchStatus = (state: RootState) => state.articles.articles.status
+export const articlesListFetched = (state: RootState) => state.articles.articles.value;
+
 
 export default authSlice.reducer;

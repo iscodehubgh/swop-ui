@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   EllipsisOutlined,
   SendOutlined,
@@ -8,26 +8,29 @@ import { Card, Col, Row } from 'antd';
 import swop from '../../assets/logo/swop_dark.png';
 import Filter from '../filter/Filter';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { fetchArticles, articlesListFetched } from './articlesSlice';
 
 const { Meta } = Card;
 
 const Articles: React.FC = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const articles = useAppSelector(articlesListFetched);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // testing
-  setTimeout(() => {
-    setLoading(false);
-  }, 1000);
+  useEffect(() => {
+    dispatch(fetchArticles());
+  }, []);
 
   return (
     <div>
       <Filter />
       <Row style={{ marginTop: '2rem' }} gutter={24}>
-        {[0, 1, 2, 4, 5, 6, 7, 8, 9].map((item, index) => (
+        {articles.map((item, index) => (
           <Col span={6} key={index}>
             <Card
-              loading={loading}
+              loading={false}
               hoverable
               style={{ width: '100%', marginBottom: '24px' }}
               cover={<img alt="logo" src={swop} />}
@@ -42,8 +45,8 @@ const Articles: React.FC = () => {
               ]}
             >
               <Meta
-                title={`Item ${item}`}
-                description="PlayStation PS5 Console - God of War Ragnarök Bundle"
+                title={item.title}
+                description={item.description}
               />
             </Card>
           </Col>
