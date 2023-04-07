@@ -1,16 +1,16 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { User } from '../../types/user';
+import { LoginResponse } from '../../types/auth';
 import { Credentials, Registration } from '../../types/auth';
 import { login, register } from './authAPI';
 import { RootState } from '../../app/store';
 
 export interface AuthState {
   login: {
-    value: User | undefined,
+    value: LoginResponse | undefined,
     status: 'idle' | 'loading' | 'failed';
   },
   register: {
-    value: User | undefined,
+    value: LoginResponse | undefined,
     status: 'idle' | 'loading' | 'failed';
   },
   loginModal: {
@@ -50,9 +50,6 @@ export const authLogin = createAsyncThunk(
   'auth/login',
   async (body: Credentials) => {
     const response = await login(body.username, body.password);
-    console.log("response", response);
-    const { token } = response;
-    localStorage.setItem("authToken", token);
     return response;
   }
 );
@@ -76,6 +73,10 @@ export const authSlice = createSlice({
       .addCase(authRegister.fulfilled, (state, action) => {
         state.register.status = 'idle';
         state.register.value = action.payload;
+        // close modal if successful
+        state.registerModal.value = false;
+        // save token to local storage if successful
+        localStorage.setItem("authToken", action.payload.token);
       })
       .addCase(authRegister.rejected, (state) => {
         state.register.status = 'failed';
@@ -85,7 +86,11 @@ export const authSlice = createSlice({
       })
       .addCase(authLogin.fulfilled, (state, action) => {
         state.login.status = 'idle';
-        // state.login.value = action.payload;
+        // close modal if successful
+        state.loginModal.value = false;
+        state.login.value = action.payload;
+        // save token to local storage if successful
+        localStorage.setItem("authToken", action.payload.token);
       })
       .addCase(authLogin.rejected, (state) => {
         state.login.status = 'failed';

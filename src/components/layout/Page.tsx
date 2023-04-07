@@ -7,7 +7,7 @@ import {
   PlusCircleOutlined,
   OrderedListOutlined,
 } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import swop from '../../assets/logo/swop_dark.png';
 
 const { Content, Sider } = Layout;
@@ -18,31 +18,41 @@ interface Props {
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
-  children?: MenuItem[],
-): MenuItem {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  } as MenuItem;
-}
-
-const items: MenuItem[] = [
-  getItem('Articles', '1', <OrderedListOutlined />),
-  getItem('Add article', '2', <PlusCircleOutlined />),
-  getItem('My offers', '3', <MessageOutlined />),
-  getItem('Swop requests', '4', <PullRequestOutlined />),
-];
-
 const Page = ({ children }: Props): JSX.Element => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  const navigate = useNavigate();
+
+  const getItem = (
+    label: React.ReactNode,
+    key: React.Key,
+    icon?: React.ReactNode,
+    children?: MenuItem[],
+    onClick?: () => void
+  ): MenuItem => {
+    return {
+      key,
+      icon,
+      children,
+      label,
+      onClick,
+    } as MenuItem;
+  };
+
+  const items: MenuItem[] = [
+    getItem('Articles', '1', <OrderedListOutlined />, undefined, () => navigate('/')),
+    getItem('Add article', '2', <PlusCircleOutlined />, undefined, () =>
+      navigate('/articles/add')
+    ),
+    getItem('My offers', '3', <MessageOutlined />, undefined, () =>
+      navigate('/offers/my')
+    ),
+    getItem('Swop requests', '4', <PullRequestOutlined />, undefined, () =>
+      navigate('/swop/requests')
+    ),
+  ];
 
   return (
     <Layout className="layout" hasSider>

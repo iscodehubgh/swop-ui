@@ -3,22 +3,43 @@ import { Avatar, Dropdown, Layout, Space } from 'antd';
 import { DownOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import './Navbar.less';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { authLoginStatus, showLoginModal } from '../../features/auth/authSlice';
+import { authLoginStatus, authRegisterStatus, showLoginModal } from '../../features/auth/authSlice';
 import LoginModal from '../../features/auth/login/Login';
 import RegisterModal from '../../features/auth/register/Register';
+import jwt from 'jwt-decode';
+import { DecodedToken } from '../../types/auth';
+import { useNavigate } from 'react-router-dom';
 
 const { Header } = Layout;
 
 const Navbar = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const status = useAppSelector(authLoginStatus);
+  const loginStatus = useAppSelector(authLoginStatus);
+  const registerStatus = useAppSelector(authRegisterStatus);
+  const navigate = useNavigate();
 
   const [isLogged, setIsLogged] = useState<boolean>(false);
+  const [user, setUser] = useState<string>('');
+  const [initials, setInitials] = useState<string>('');
 
   useEffect(() => {
     const authToken = localStorage.getItem("authToken");
     setIsLogged(!!authToken);
-  }, [status]);
+    if (authToken) {
+      const decodedToken: DecodedToken = jwt(authToken);
+
+      if (decodedToken.exp * 1000 < new Date().getTime()) {
+        localStorage.removeItem("authToken");
+        setIsLogged(false);
+        navigate("/");
+      }
+
+      if (decodedToken.firstname && decodedToken.lastname) {
+        setUser(`${decodedToken.firstname} ${decodedToken.lastname}`);
+        setInitials(`${decodedToken.firstname[0]}${decodedToken.lastname[0]}`);
+      }
+    }
+  }, [loginStatus, registerStatus]);
 
   return (
     <Header
@@ -39,7 +60,7 @@ const Navbar = (): JSX.Element => {
                 }}
                 size="large"
               >
-                MS
+                {initials}
               </Avatar>
 
               <Dropdown
@@ -59,13 +80,17 @@ const Navbar = (): JSX.Element => {
                       danger: true,
                       label: 'Sign out',
                       icon: <LogoutOutlined />,
+                      onClick: () => {
+                        localStorage.removeItem('authToken');
+                        window.location.reload();
+                      },
                     },
                   ],
                 }}
               >
                 <a onClick={(e) => e.preventDefault()}>
                   <Space style={{ color: 'white' }}>
-                    <span>Mileta Stanisic</span>
+                    <span>{user}</span>
                     <DownOutlined />
                   </Space>
                 </a>

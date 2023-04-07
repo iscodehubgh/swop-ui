@@ -10,3 +10,14 @@ export interface Registration {
   password: string
   confirmPassword: string
 }
+
+export interface DecodedToken {
+  exp: number
+  email: string
+  firstname: string
+  lastname: string
+}
+
+export interface LoginResponse {
+  token: string
+}
