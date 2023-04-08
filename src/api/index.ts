@@ -29,7 +29,7 @@ const backendUrl = () => {
   const PROTOCOL = window.REACT_APP_BACKEND_PROTOCOL;
   const DOMAIN = window.REACT_APP_BACKEND_DOMAIN;
   const PORT = window.REACT_APP_BACKEND_PORT;
-  const BACKEND_URL = `${PROTOCOL}://${DOMAIN}:${PORT}`;
+  const BACKEND_URL = `${PROTOCOL}://${DOMAIN}:${PORT}/api`;
   return BACKEND_URL;
 };
 export const api = {

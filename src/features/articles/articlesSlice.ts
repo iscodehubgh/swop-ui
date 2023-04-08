@@ -29,7 +29,7 @@ export const fetchArticles = createAsyncThunk(
   'articles/get',
   async () => {
     const response = await getArticles();
-    return response;
+    return response.data;
   }
 );
 
@@ -71,8 +71,8 @@ export const authSlice = createSlice({
 });
 
 
-export const articlesFetchStatus = (state: RootState) => state.articles.articles.status
-export const articlesListFetched = (state: RootState) => state.articles.articles.value;
+export const fetchArticlesStatus = (state: RootState) => state.articles.articles.status
+export const fetchedArticleList = (state: RootState) => state.articles.articles.value;
 
 
 export default authSlice.reducer;

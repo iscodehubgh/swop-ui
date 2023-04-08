@@ -3,43 +3,34 @@ import { Avatar, Dropdown, Layout, Space } from 'antd';
 import { DownOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import './Navbar.less';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { authLoginStatus, authRegisterStatus, showLoginModal } from '../../features/auth/authSlice';
+import {
+  authLoginIsLogged,
+  showLoginModal,
+} from '../../features/auth/authSlice';
 import LoginModal from '../../features/auth/login/Login';
 import RegisterModal from '../../features/auth/register/Register';
-import jwt from 'jwt-decode';
-import { DecodedToken } from '../../types/auth';
-import { useNavigate } from 'react-router-dom';
+import { decodeToken } from '../../utils/auth';
 
 const { Header } = Layout;
 
 const Navbar = (): JSX.Element => {
   const dispatch = useAppDispatch();
-  const loginStatus = useAppSelector(authLoginStatus);
-  const registerStatus = useAppSelector(authRegisterStatus);
-  const navigate = useNavigate();
+  const isLogged = useAppSelector(authLoginIsLogged);
 
-  const [isLogged, setIsLogged] = useState<boolean>(false);
   const [user, setUser] = useState<string>('');
   const [initials, setInitials] = useState<string>('');
 
   useEffect(() => {
-    const authToken = localStorage.getItem("authToken");
-    setIsLogged(!!authToken);
-    if (authToken) {
-      const decodedToken: DecodedToken = jwt(authToken);
-
-      if (decodedToken.exp * 1000 < new Date().getTime()) {
-        localStorage.removeItem("authToken");
-        setIsLogged(false);
-        navigate("/");
-      }
+    const authToken = localStorage.getItem('authToken');
+    if (isLogged && authToken) {
+      const decodedToken = decodeToken(authToken);
 
       if (decodedToken.firstname && decodedToken.lastname) {
         setUser(`${decodedToken.firstname} ${decodedToken.lastname}`);
         setInitials(`${decodedToken.firstname[0]}${decodedToken.lastname[0]}`);
       }
     }
-  }, [loginStatus, registerStatus]);
+  }, [isLogged]);
 
   return (
     <Header

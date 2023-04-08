@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import {
-  EllipsisOutlined,
-  SendOutlined,
-  ShareAltOutlined,
-} from '@ant-design/icons';
-import { Card, Col, Row } from 'antd';
-import swop from '../../assets/logo/swop_dark.png';
-import Filter from '../filter/Filter';
-import { useNavigate } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { fetchArticles, articlesListFetched } from './articlesSlice';
+import React, { useEffect } from 'react';
 
-const { Meta } = Card;
+import { Col, Empty, Row, Spin } from 'antd';
+import Filter from '../filter/Filter';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import {
+  fetchArticles,
+  fetchedArticleList,
+  fetchArticlesStatus,
+} from './articlesSlice';
+import ArticleCard from './view/ArticleCard';
 
 const Articles: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const articles = useAppSelector(articlesListFetched);
-  const [loading, setLoading] = useState<boolean>(true);
+  const articles = useAppSelector(fetchedArticleList);
+  const status = useAppSelector(fetchArticlesStatus);
 
   useEffect(() => {
     dispatch(fetchArticles());
@@ -26,32 +22,21 @@ const Articles: React.FC = () => {
   return (
     <div>
       <Filter />
-      <Row style={{ marginTop: '2rem' }} gutter={24}>
-        {articles.map((item, index) => (
-          <Col span={6} key={index}>
-            <Card
-              loading={false}
-              hoverable
-              style={{ width: '100%', marginBottom: '24px' }}
-              cover={<img alt="logo" src={swop} />}
-              actions={[
-                <EllipsisOutlined title="More actions" key="ellipsis" />,
-                <SendOutlined
-                  title="Send swop request"
-                  onClick={() => navigate('/swop/draft/1')}
-                  key="request"
-                />,
-                <ShareAltOutlined title="Share" key="share" />,
-              ]}
-            >
-              <Meta
-                title={item.title}
-                description={item.description}
-              />
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      <Spin style={{ minHeight: '8rem' }} spinning={status === 'loading'}>
+        <Row style={{ marginTop: '2rem' }} gutter={24}>
+          {articles.length > 0 &&
+            articles.map((item, index) => (
+              <Col span={6} key={index}>
+                <ArticleCard article={item} />
+              </Col>
+            ))}
+          {articles.length === 0 && status !== 'loading' && (
+            <Col span={12} offset={6}>
+              <Empty description="No articles to show" />
+            </Col>
+          )}
+        </Row>
+      </Spin>
     </div>
   );
 };

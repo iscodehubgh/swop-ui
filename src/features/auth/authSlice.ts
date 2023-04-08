@@ -8,6 +8,7 @@ export interface AuthState {
   login: {
     value: LoginResponse | undefined,
     status: 'idle' | 'loading' | 'failed';
+    isLogged: boolean;
   },
   register: {
     value: LoginResponse | undefined,
@@ -25,6 +26,7 @@ const initialState: AuthState = {
   login: {
     value: undefined,
     status: 'idle',
+    isLogged: false,
   },
   register: {
     value: undefined,
@@ -77,15 +79,18 @@ export const authSlice = createSlice({
         state.registerModal.value = false;
         // save token to local storage if successful
         localStorage.setItem("authToken", action.payload.token);
+        state.login.isLogged = true;
       })
       .addCase(authRegister.rejected, (state) => {
         state.register.status = 'failed';
+        state.login.isLogged = false;
       })
       .addCase(authLogin.pending, (state) => {
         state.login.status = 'loading';
       })
       .addCase(authLogin.fulfilled, (state, action) => {
         state.login.status = 'idle';
+        state.login.isLogged = true;
         // close modal if successful
         state.loginModal.value = false;
         state.login.value = action.payload;
@@ -94,6 +99,7 @@ export const authSlice = createSlice({
       })
       .addCase(authLogin.rejected, (state) => {
         state.login.status = 'failed';
+        state.login.isLogged = false;
       });
   },
 });
@@ -104,6 +110,7 @@ export const isLoginModalOpen = (state: RootState) => state.auth.loginModal.valu
 export const isRegisterModalOpen = (state: RootState) => state.auth.registerModal.value;
 
 export const authLoginStatus = (state: RootState) => state.auth.login.status;
+export const authLoginIsLogged = (state: RootState) => state.auth.login.isLogged;
 export const authRegisterStatus = (state: RootState) => state.auth.register.status;
 
 export default authSlice.reducer;

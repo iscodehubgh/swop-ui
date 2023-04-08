@@ -9,6 +9,8 @@ import {
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import swop from '../../assets/logo/swop_dark.png';
+import { authLoginIsLogged } from '../../features/auth/authSlice';
+import { useAppSelector } from '../../app/hooks';
 
 const { Content, Sider } = Layout;
 
@@ -19,11 +21,11 @@ interface Props {
 type MenuItem = Required<MenuProps>['items'][number];
 
 const Page = ({ children }: Props): JSX.Element => {
+  const navigate = useNavigate();
+  const isLogged = useAppSelector(authLoginIsLogged);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-
-  const navigate = useNavigate();
 
   const getItem = (
     label: React.ReactNode,
@@ -42,7 +44,9 @@ const Page = ({ children }: Props): JSX.Element => {
   };
 
   const items: MenuItem[] = [
-    getItem('Articles', '1', <OrderedListOutlined />, undefined, () => navigate('/')),
+    getItem('Articles', '1', <OrderedListOutlined />, undefined, () =>
+      navigate('/')
+    ),
     getItem('Add article', '2', <PlusCircleOutlined />, undefined, () =>
       navigate('/articles/add')
     ),
@@ -56,36 +60,40 @@ const Page = ({ children }: Props): JSX.Element => {
 
   return (
     <Layout className="layout" hasSider>
-      <Sider
-        style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-          top: 0,
-          bottom: 0,
-        }}
-      >
-        <div
+      {isLogged && (
+        <Sider
           style={{
-            height: 60,
-            margin: '16px 16px 16px 16px',
-            paddingLeft: '16px',
-            // background: 'rgba(255, 255, 255, 0.2)',
+            overflow: 'auto',
+            height: '100vh',
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            bottom: 0,
           }}
         >
-          <Link to={'/'} className="x-logo">
-            <img src={swop} alt="swop" height={60} />
-          </Link>
-        </div>
-        <Menu
-          theme="dark"
-          defaultSelectedKeys={['1']}
-          mode="inline"
-          items={items}
-        />
-      </Sider>
-      <Layout className="site-layout" style={{ marginLeft: 200 }}>
+          <div
+            style={{
+              height: 60,
+              margin: '16px 16px 16px 16px',
+              paddingLeft: '16px',
+            }}
+          >
+            <Link to={'/'} className="x-logo">
+              <img src={swop} alt="swop" height={60} />
+            </Link>
+          </div>
+          <Menu
+            theme="dark"
+            defaultSelectedKeys={['1']}
+            mode="inline"
+            items={items}
+          />
+        </Sider>
+      )}
+      <Layout
+        className="site-layout"
+        style={{ marginLeft: isLogged ? 200 : 0 }}
+      >
         <Navbar />
         <Content
           style={{
