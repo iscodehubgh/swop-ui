@@ -66,6 +66,9 @@ export const authSlice = createSlice({
     showRegisterModal: (state, action: PayloadAction<boolean>) => {
       state.registerModal.value = action.payload;
     },
+    setIsLogged: (state, action: PayloadAction<boolean>) => {
+      state.login.isLogged = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -104,7 +107,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const { showLoginModal, showRegisterModal } = authSlice.actions;
+export const { showLoginModal, showRegisterModal, setIsLogged } = authSlice.actions;
 
 export const isLoginModalOpen = (state: RootState) => state.auth.loginModal.value;
 export const isRegisterModalOpen = (state: RootState) => state.auth.registerModal.value;

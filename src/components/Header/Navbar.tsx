@@ -5,6 +5,9 @@ import './Navbar.less';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   authLoginIsLogged,
+  authLoginStatus,
+  authRegisterStatus,
+  setIsLogged,
   showLoginModal,
 } from '../../features/auth/authSlice';
 import LoginModal from '../../features/auth/login/Login';
@@ -16,13 +19,16 @@ const { Header } = Layout;
 const Navbar = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const isLogged = useAppSelector(authLoginIsLogged);
+  const loginStatus = useAppSelector(authLoginStatus);
+  const registerStatus = useAppSelector(authRegisterStatus);
 
   const [user, setUser] = useState<string>('');
   const [initials, setInitials] = useState<string>('');
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
-    if (isLogged && authToken) {
+    dispatch(setIsLogged(!!authToken));
+    if (authToken) {
       const decodedToken = decodeToken(authToken);
 
       if (decodedToken.firstname && decodedToken.lastname) {
@@ -30,7 +36,7 @@ const Navbar = (): JSX.Element => {
         setInitials(`${decodedToken.firstname[0]}${decodedToken.lastname[0]}`);
       }
     }
-  }, [isLogged]);
+  }, [loginStatus, registerStatus]);
 
   return (
     <Header

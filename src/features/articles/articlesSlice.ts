@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createArticle, getArticles } from './articlesAPI';
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createArticle, getArticles, updateArticle } from './articlesAPI';
 import { RootState } from '../../app/store';
 import { Article, ArticleInput } from '../../types/article';
 
@@ -10,7 +10,10 @@ export interface AuthState {
   },
   newArticle: {
     value: Article | undefined,
-    status: 'idle' | 'loading' | 'failed';
+    status: 'idle' | 'loading' | 'failed' | 'success';
+  },
+  addArticleModal: {
+    value: boolean,
   }
 }
 
@@ -22,7 +25,10 @@ const initialState: AuthState = {
   newArticle: {
     value: undefined,
     status: 'idle',
-  }
+  },
+  addArticleModal: {
+    value: false,
+  },
 };
 
 export const fetchArticles = createAsyncThunk(
@@ -37,14 +43,27 @@ export const createNewArticle = createAsyncThunk(
   'articles/post',
   async (body: ArticleInput) => {
     const response = await createArticle(body);
-    return response;
+    return response.data;
   }
 );
 
-export const authSlice = createSlice({
+export const updateOneArticle = createAsyncThunk(
+  'articles/put',
+  async (body: Article) => {
+    const { id: articleId } = body;
+    const response = await updateArticle(articleId, body);
+    return response.data;
+  }
+);
+
+export const articlesSlice = createSlice({
   name: 'articles',
   initialState,
-  reducers: {},
+  reducers: {
+    showAddArticleModal: (state, action: PayloadAction<boolean>) => {
+      state.addArticleModal.value = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchArticles.pending, (state) => {
@@ -61,18 +80,34 @@ export const authSlice = createSlice({
         state.newArticle.status = 'loading';
       })
       .addCase(createNewArticle.fulfilled, (state, action) => {
-        state.newArticle.status = 'idle';
+        state.newArticle.status = 'success';
         state.newArticle.value = action.payload;
       })
       .addCase(createNewArticle.rejected, (state) => {
+        state.newArticle.status = 'failed';
+      })
+      .addCase(updateOneArticle.pending, (state) => {
+        state.newArticle.status = 'loading';
+      })
+      .addCase(updateOneArticle.fulfilled, (state, action) => {
+        state.newArticle.status = 'success';
+        state.newArticle.value = action.payload;
+      })
+      .addCase(updateOneArticle.rejected, (state) => {
         state.newArticle.status = 'failed';
       })
   },
 });
 
 
+export const { showAddArticleModal } = articlesSlice.actions;
+
+export const isAddArticleModalOpened = (state: RootState) => state.articles.addArticleModal.value;
+
 export const fetchArticlesStatus = (state: RootState) => state.articles.articles.status
 export const fetchedArticleList = (state: RootState) => state.articles.articles.value;
 
+export const createArticleStatus = (state: RootState) => state.articles.newArticle.status;
 
-export default authSlice.reducer;
+
+export default articlesSlice.reducer;

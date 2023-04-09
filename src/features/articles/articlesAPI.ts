@@ -1,5 +1,5 @@
 import { api } from "../../api";
-import { ArticleInput } from "../../types/article";
+import { Article, ArticleInput } from "../../types/article";
 
 export const getArticles = async () => {
   const url = '/articles';
@@ -11,6 +11,13 @@ export const getArticles = async () => {
 export const createArticle = async (body: ArticleInput) => {
   const url = '/articles';
   const response = await api.post(url, body);
+
+  return await response.json();
+}
+
+export const updateArticle = async (articleId: string, body: Article) => {
+  const url = `/articles/${articleId}`;
+  const response = await api.put(url, body);
 
   return await response.json();
 }

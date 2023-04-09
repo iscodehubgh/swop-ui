@@ -10,7 +10,9 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import swop from '../../assets/logo/swop_dark.png';
 import { authLoginIsLogged } from '../../features/auth/authSlice';
-import { useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { showAddArticleModal } from '../../features/articles/articlesSlice';
+import AddArticleModal from '../../features/articles/add/AddArticleModal';
 
 const { Content, Sider } = Layout;
 
@@ -22,6 +24,7 @@ type MenuItem = Required<MenuProps>['items'][number];
 
 const Page = ({ children }: Props): JSX.Element => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const isLogged = useAppSelector(authLoginIsLogged);
   const {
     token: { colorBgContainer },
@@ -47,9 +50,10 @@ const Page = ({ children }: Props): JSX.Element => {
     getItem('Articles', '1', <OrderedListOutlined />, undefined, () =>
       navigate('/')
     ),
-    getItem('Add article', '2', <PlusCircleOutlined />, undefined, () =>
-      navigate('/articles/add')
-    ),
+    getItem('Add article', '2', <PlusCircleOutlined />, undefined, () => {
+      console.log('fired')
+      dispatch(showAddArticleModal(true));
+    }),
     getItem('My offers', '3', <MessageOutlined />, undefined, () =>
       navigate('/offers/my')
     ),
@@ -104,6 +108,8 @@ const Page = ({ children }: Props): JSX.Element => {
           {children}
         </Content>
       </Layout>
+
+      <AddArticleModal />
     </Layout>
   );
 };
