@@ -40,14 +40,32 @@ export const api = {
     });
     return response;
   },
-  post: async (url: string, body: unknown): Promise<Response> => {
+  post: async (
+    url: string,
+    body: unknown,
+  ): Promise<Response> => {
     const response = await fetch(`${backendUrl()}${url}`, {
       method: httpMethods.POST,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
       body: JSON.stringify(body),
+    });
+
+    return response;
+  },
+  postFormData: async (
+    url: string,
+    body: FormData,
+  ): Promise<Response> => {
+    const response = await fetch(`${backendUrl()}${url}`, {
+      method: httpMethods.POST,
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=${new Date().getTime()})}`,
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      },
+      body,
     });
 
     return response;

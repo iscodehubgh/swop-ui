@@ -10,7 +10,7 @@ export interface AuthState {
   },
   newArticle: {
     value: Article | undefined,
-    status: 'idle' | 'loading' | 'failed' | 'success';
+    status: 'idle' | 'loading' | 'failed';
   },
   addArticleModal: {
     value: boolean,
@@ -41,7 +41,7 @@ export const fetchArticles = createAsyncThunk(
 
 export const createNewArticle = createAsyncThunk(
   'articles/post',
-  async (body: ArticleInput) => {
+  async (body: FormData) => {
     const response = await createArticle(body);
     return response.data;
   }
@@ -80,7 +80,7 @@ export const articlesSlice = createSlice({
         state.newArticle.status = 'loading';
       })
       .addCase(createNewArticle.fulfilled, (state, action) => {
-        state.newArticle.status = 'success';
+        state.newArticle.status = 'idle';
         state.newArticle.value = action.payload;
       })
       .addCase(createNewArticle.rejected, (state) => {
@@ -90,7 +90,7 @@ export const articlesSlice = createSlice({
         state.newArticle.status = 'loading';
       })
       .addCase(updateOneArticle.fulfilled, (state, action) => {
-        state.newArticle.status = 'success';
+        state.newArticle.status = 'idle';
         state.newArticle.value = action.payload;
       })
       .addCase(updateOneArticle.rejected, (state) => {

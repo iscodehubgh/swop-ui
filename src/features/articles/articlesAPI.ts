@@ -8,9 +8,9 @@ export const getArticles = async () => {
   return await response.json();
 }
 
-export const createArticle = async (body: ArticleInput) => {
+export const createArticle = async (body: FormData) => {
   const url = '/articles';
-  const response = await api.post(url, body);
+  const response = await api.postFormData(url, body);
 
   return await response.json();
 }
