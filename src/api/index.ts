@@ -62,7 +62,6 @@ export const api = {
     const response = await fetch(`${backendUrl()}${url}`, {
       method: httpMethods.POST,
       headers: {
-        'Content-Type': `multipart/form-data; boundary=${new Date().getTime()})}`,
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
       body,

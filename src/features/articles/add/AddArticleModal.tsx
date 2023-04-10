@@ -53,22 +53,18 @@ const AddArticleModal = () => {
     const formData = new FormData();
 
     if (article && article.title) {
-      formData.append('title', article.title);
+      formData.append('Title', article.title);
     }
 
     if (article && article.description) {
-      formData.append('description', article.description);
+      formData.append('Description', article.description);
     }
   
-    if (article && article.images) {
-      article.images.forEach((file) => {
-        formData.append('images', file.originFileObj as RcFile);
+    if (images && images.length) {
+      images.forEach((file) => {
+        formData.append('Images', file.originFileObj as RcFile);
       });
     }
-
-    console.log('formData', formData.get('images'));
-    console.log('formData', formData.get('title'));
-    console.log('formData', formData.get('description'));
 
     dispatch(createNewArticle(formData));
   };
